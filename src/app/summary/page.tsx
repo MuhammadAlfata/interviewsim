@@ -62,26 +62,27 @@ export default function SummaryPage() {
             </CardHeader>
             <CardContent className="flex-1 flex flex-col">
               {recordingUrl ? (
-                <div className="rounded-xl overflow-hidden bg-neutral-950 border border-neutral-800 aspect-video mb-4 relative">
-                  <video 
-                    src={recordingUrl} 
-                    controls 
-                    className="w-full h-full object-cover"
-                    onTimeUpdate={(e) => setCurrentVideoTime(e.currentTarget.currentTime)}
-                  />
+                <>
+                  <div className="rounded-xl overflow-hidden bg-neutral-950 border border-neutral-800 aspect-video mb-4 relative">
+                    <video 
+                      src={recordingUrl} 
+                      controls 
+                      className="w-full h-full object-cover"
+                      onTimeUpdate={(e) => setCurrentVideoTime(e.currentTarget.currentTime)}
+                    />
+                  </div>
+                  
                   {activeQuestion && (
-                    <div className="absolute bottom-16 left-0 right-0 px-6 pointer-events-none flex justify-center z-10">
-                      <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl max-w-[90%] transform transition-all duration-300">
-                        <div className="text-primary text-xs font-bold tracking-wider mb-1 uppercase">
-                          Question {activeQuestion.index + 1}
-                        </div>
-                        <p className="text-white text-sm sm:text-base font-medium drop-shadow-md">
-                          {activeQuestion.text}
-                        </p>
+                    <div className="bg-neutral-800/50 border border-neutral-700/50 rounded-xl p-4 mb-4 transition-all duration-300">
+                      <div className="text-primary text-xs font-bold tracking-wider mb-1.5 uppercase">
+                        Currently Answering: Question {activeQuestion.index + 1}
                       </div>
+                      <p className="text-white text-sm sm:text-base font-medium">
+                        {activeQuestion.text}
+                      </p>
                     </div>
                   )}
-                </div>
+                </>
               ) : (
                 <div className="rounded-xl bg-neutral-950 border border-neutral-800 aspect-video mb-4 flex items-center justify-center text-neutral-500">
                   No recording available
