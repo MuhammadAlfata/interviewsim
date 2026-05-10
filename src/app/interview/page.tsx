@@ -48,13 +48,20 @@ export default function InterviewRoom() {
     async function setupMedia() {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
-          video: true,
+          video: { 
+            width: { ideal: 1280, max: 1280 },
+            height: { ideal: 720, max: 720 },
+            frameRate: { ideal: 30, max: 30 }
+          },
           audio: true
         });
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
+
+        // Clear previous chunks
+        chunksRef.current = [];
 
         // Start recording
         const mediaRecorder = new MediaRecorder(mediaStream);
@@ -74,7 +81,7 @@ export default function InterviewRoom() {
           }
         };
 
-        mediaRecorder.start(1000); // Flush chunks every 1 second to prevent memory issues and frozen frames on iOS
+        mediaRecorder.start();
 
       } catch (err) {
         console.error("Failed to get media devices:", err);
