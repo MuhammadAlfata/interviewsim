@@ -43,7 +43,7 @@ export default function InterviewRoom() {
         timeMs: Date.now() - startTimeRef.current
       });
     }
-  }, [currentQuestionIndex, status]); // addQuestionTimestamp and questions are stable
+  }, [currentQuestionIndex, status, addQuestionTimestamp, questions]); // addQuestionTimestamp and questions are stable
 
   // Redirect if visiting directly without setup
   useEffect(() => {
@@ -65,7 +65,7 @@ export default function InterviewRoom() {
           if ('wakeLock' in navigator) {
             await navigator.wakeLock.request('screen');
           }
-        } catch (e) {
+        } catch (err) {
           console.log('WakeLock not supported or denied');
         }
 
