@@ -74,7 +74,7 @@ export default function InterviewRoom() {
           }
         };
 
-        mediaRecorder.start();
+        mediaRecorder.start(1000); // Flush chunks every 1 second to prevent memory issues and frozen frames on iOS
 
       } catch (err) {
         console.error("Failed to get media devices:", err);
