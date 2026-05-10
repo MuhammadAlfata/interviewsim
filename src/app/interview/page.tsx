@@ -65,7 +65,7 @@ export default function InterviewRoom() {
           if ('wakeLock' in navigator) {
             await navigator.wakeLock.request('screen');
           }
-        } catch (err) {
+        } catch {
           console.log('WakeLock not supported or denied');
         }
 
