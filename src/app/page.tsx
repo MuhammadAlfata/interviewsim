@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
+import { Switch } from '@/components/ui/switch';
 import { useInterviewStore } from '@/store/useInterviewStore';
 import { BrainCircuit, Play } from 'lucide-react';
 
@@ -21,6 +22,7 @@ export default function SetupPage() {
   const [roleName, setRoleName] = useState('');
   const [interviewType, setInterviewType] = useState('General');
   const [questionsRaw, setQuestionsRaw] = useState('');
+  const [shuffleQuestions, setShuffleQuestions] = useState(true);
   const [durationMinutes, setDurationMinutes] = useState(15);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -44,14 +46,16 @@ export default function SetupPage() {
           "Describe a time you overcame a challenge."
         ];
 
-    // Shuffle questions
-    const shuffledQuestions = [...finalQuestions].sort(() => Math.random() - 0.5);
+    // Shuffle questions if enabled
+    const finalProcessedQuestions = shuffleQuestions 
+      ? [...finalQuestions].sort(() => Math.random() - 0.5)
+      : finalQuestions;
 
     setSetupData({
       companyName: companyName || 'Any Company',
       roleName: roleName || 'Any Role',
       interviewType,
-      questions: shuffledQuestions,
+      questions: finalProcessedQuestions,
       durationMinutes
     });
 
@@ -133,6 +137,17 @@ export default function SetupPage() {
                   value={questionsRaw}
                   onChange={(e) => setQuestionsRaw(e.target.value)}
                 />
+              </div>
+
+              <div className="flex items-center space-x-3">
+                <Switch 
+                  id="shuffle" 
+                  checked={shuffleQuestions}
+                  onCheckedChange={setShuffleQuestions}
+                />
+                <Label htmlFor="shuffle" className="text-neutral-300 font-normal cursor-pointer">
+                  Acak urutan pertanyaan
+                </Label>
               </div>
 
               <div className="space-y-4">
