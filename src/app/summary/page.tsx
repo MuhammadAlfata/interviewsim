@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useInterviewStore } from '@/store/useInterviewStore';
@@ -11,8 +11,14 @@ import { Download, RefreshCw, CheckCircle2 } from 'lucide-react';
 export default function SummaryPage() {
   const router = useRouter();
   const { 
-    companyName, roleName, status, recordingUrl, questions, reset 
+    companyName, roleName, status, recordingUrl, questions, questionTimestamps, reset 
   } = useInterviewStore();
+
+  const [currentVideoTime, setCurrentVideoTime] = useState(0);
+
+  const activeQuestion = questionTimestamps && questionTimestamps.length > 0
+    ? [...questionTimestamps].reverse().find(q => (currentVideoTime * 1000) >= q.timeMs)
+    : null;
 
   useEffect(() => {
     if (status !== 'finished') {
@@ -61,7 +67,20 @@ export default function SummaryPage() {
                     src={recordingUrl} 
                     controls 
                     className="w-full h-full object-cover"
+                    onTimeUpdate={(e) => setCurrentVideoTime(e.currentTarget.currentTime)}
                   />
+                  {activeQuestion && (
+                    <div className="absolute bottom-16 left-0 right-0 px-6 pointer-events-none flex justify-center z-10">
+                      <div className="bg-black/80 backdrop-blur-md border border-white/10 rounded-xl p-4 shadow-2xl max-w-[90%] transform transition-all duration-300">
+                        <div className="text-primary text-xs font-bold tracking-wider mb-1 uppercase">
+                          Question {activeQuestion.index + 1}
+                        </div>
+                        <p className="text-white text-sm sm:text-base font-medium drop-shadow-md">
+                          {activeQuestion.text}
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="rounded-xl bg-neutral-950 border border-neutral-800 aspect-video mb-4 flex items-center justify-center text-neutral-500">

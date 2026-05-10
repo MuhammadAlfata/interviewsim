@@ -18,7 +18,7 @@ export default function InterviewRoom() {
   const { 
     companyName, roleName, questions, 
     currentQuestionIndex, timeRemainingSeconds, status,
-    nextQuestion, endInterview, setTimeRemaining, setRecordingUrl 
+    nextQuestion, endInterview, setTimeRemaining, setRecordingUrl, addQuestionTimestamp
   } = useInterviewStore();
 
   // Local state
@@ -31,6 +31,19 @@ export default function InterviewRoom() {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  // Track question timestamps
+  useEffect(() => {
+    if (status === 'active' && startTimeRef.current) {
+      // Record timestamp for current question
+      addQuestionTimestamp({
+        index: currentQuestionIndex,
+        text: questions[currentQuestionIndex],
+        timeMs: Date.now() - startTimeRef.current
+      });
+    }
+  }, [currentQuestionIndex, status]); // addQuestionTimestamp and questions are stable
 
   // Redirect if visiting directly without setup
   useEffect(() => {
@@ -105,6 +118,16 @@ export default function InterviewRoom() {
         };
 
         mediaRecorder.start();
+        
+        // Record exact start time
+        startTimeRef.current = Date.now();
+        
+        // Record the first question timestamp immediately
+        addQuestionTimestamp({
+          index: 0,
+          text: questions[0],
+          timeMs: 0
+        });
 
       } catch (err) {
         console.error("Failed to get media devices:", err);

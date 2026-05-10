@@ -11,6 +11,7 @@ export const useInterviewStore = create<InterviewState>((set) => ({
   currentQuestionIndex: 0,
   timeRemainingSeconds: null,
   recordingUrl: null,
+  questionTimestamps: [],
 
   setSetupData: (data) => set((state) => ({ ...state, ...data })),
   
@@ -34,6 +35,10 @@ export const useInterviewStore = create<InterviewState>((set) => ({
     }
     return { status: 'finished' };
   }),
+
+  addQuestionTimestamp: (timestamp) => set((state) => ({
+    questionTimestamps: [...state.questionTimestamps, timestamp]
+  })),
   
   setTimeRemaining: (seconds) => set({ timeRemainingSeconds: seconds }),
   
@@ -47,5 +52,6 @@ export const useInterviewStore = create<InterviewState>((set) => ({
     currentQuestionIndex: 0,
     timeRemainingSeconds: null,
     recordingUrl: null,
+    questionTimestamps: []
   })
 }));
