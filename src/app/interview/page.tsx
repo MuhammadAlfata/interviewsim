@@ -47,11 +47,20 @@ export default function InterviewRoom() {
   useEffect(() => {
     async function setupMedia() {
       try {
+        // Prevent screen sleep
+        try {
+          if ('wakeLock' in navigator) {
+            await navigator.wakeLock.request('screen');
+          }
+        } catch (e) {
+          console.log('WakeLock not supported or denied');
+        }
+
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: { 
-            width: { ideal: 1280, max: 1280 },
-            height: { ideal: 720, max: 720 },
-            frameRate: { ideal: 30, max: 30 }
+            width: { ideal: 640, max: 1280 },
+            height: { ideal: 480, max: 720 },
+            frameRate: { ideal: 24, max: 30 }
           },
           audio: true
         });
@@ -63,8 +72,22 @@ export default function InterviewRoom() {
         // Clear previous chunks
         chunksRef.current = [];
 
+        // Determine best mimeType
+        let mimeType = '';
+        if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+          mimeType = 'video/webm;codecs=vp8,opus';
+        } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) {
+          mimeType = 'video/webm;codecs=vp8';
+        } else if (MediaRecorder.isTypeSupported('video/webm')) {
+          mimeType = 'video/webm';
+        } else if (MediaRecorder.isTypeSupported('video/mp4')) {
+          mimeType = 'video/mp4';
+        }
+
+        const options = mimeType ? { mimeType } : undefined;
+
         // Start recording
-        const mediaRecorder = new MediaRecorder(mediaStream);
+        const mediaRecorder = new MediaRecorder(mediaStream, options);
         mediaRecorderRef.current = mediaRecorder;
 
         mediaRecorder.ondataavailable = (e) => {
